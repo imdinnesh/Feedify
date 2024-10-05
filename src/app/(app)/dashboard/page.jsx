@@ -13,6 +13,16 @@ import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AcceptMessageSchema } from '@/schemes/acceptSchema';
+import dayjs from 'dayjs';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
@@ -69,7 +79,7 @@ function UserDashboard() {
             } catch (error) {
                 const axiosError = error;
                 toast({
-                    title: 'Error',
+                    title: 'Empty',
                     description:
                         axiosError.response?.data.message ?? 'Failed to fetch messages',
                     variant: 'destructive',
@@ -131,6 +141,78 @@ function UserDashboard() {
         });
     };
 
+    // Export data
+    const exportData_csv = async () => {
+
+
+        if (!session || !session.user) return;
+
+        fetchMessages();
+
+
+        if (messages.length === 0) {
+            toast({
+                title: 'No Data',
+                description: 'There are no messages to export.',
+                variant: 'warning',
+            });
+            return;
+        }
+
+        const csvContent = [
+            ['ID', 'Text', 'Date'], // Header row
+            ...messages.map((message, idx) => [idx, message.content, dayjs(message.createdAt).format('MMM D, YYYY h:mm A')]) // Data rows
+        ]
+            .map(e => e.join(','))
+            .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'messages.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+            title: 'Export Successful',
+            description: 'Messages have been exported to CSV.',
+            variant: 'success',
+        });
+    };
+
+    const exportData_json = async () => {
+        if (!session || !session.user) return;
+    
+        fetchMessages();
+    
+        if (messages.length === 0) {
+            toast({
+                title: 'No Data',
+                description: 'There are no messages to export.',
+                variant: 'warning',
+            });
+            return;
+        }
+    
+        const jsonContent = JSON.stringify(messages, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'messages.json');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    
+        toast({
+            title: 'Export Successful',
+            description: 'Messages have been exported to JSON.',
+            variant: 'success',
+        });
+    };
+
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
@@ -175,6 +257,17 @@ function UserDashboard() {
                     <RefreshCcw className="h-4 w-4" />
                 )}
             </Button>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger className='ml-6 px-4 py-2 rounded-md bg-slate-800 text-gray-100'>Export</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>Export data as </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={exportData_json}>JSON</DropdownMenuItem>
+                    <DropdownMenuItem onClick={exportData_csv}>CSV</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
