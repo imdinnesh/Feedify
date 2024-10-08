@@ -5,6 +5,10 @@ const MessageSchema= new mongoose.Schema({
         type: String,
         required: true,
     },
+    space_name:{
+        type: String,
+        required: true,
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -45,6 +49,10 @@ const UserSchema= new mongoose.Schema({
     isAcceptingMessages: {
         type: Boolean,
         default: true,
+    },
+    spaces:{
+        type: [String],
+        default: [],
     },
     messages: [MessageSchema],
 });

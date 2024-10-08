@@ -213,10 +213,39 @@ function UserDashboard() {
         });
     };
 
+    // Create a new space
+    const createSpace = async () => {
+        try {
+            const response = await axios.post('/api/create-spaces',{
+                username: session.user.username,
+                space:'default'
+            });
+            if (response.data.success) {
+                toast({
+                    title: 'Space Created',
+                    description: 'A new space has been created.',
+                    variant: 'success',
+                });
+            }
+        } catch (error) {
+            const axiosError = error;
+            toast({
+                title: 'Error',
+                description:
+                    axiosError.response?.data.message ??
+                    'Failed to create a new space',
+                variant: 'destructive',
+            });
+        }
+    }
+
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
+            <Button onClick={createSpace}>Create Space</Button>
+
+            <Separator  className='mt-6'/>
             <div className="mb-4">
                 <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
                 <div className="flex items-center">
