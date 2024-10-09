@@ -15,9 +15,16 @@ export async function POST(request) {
                 { status: 404 }
             );
         }
+        if(space===''){
+            return new Response(
+                JSON.stringify({ success: false, message: 'Space name cannot be empty' }),
+                { status: 400 }
+            );
+        }
+
 
         // Check if the space already exists
-        const existingSpace = user.spaces.find(s => s=== `${space}`);
+        const existingSpace = user.spaces.find(s => s===`${space}`);
         if (existingSpace) {
             return new Response(
                 JSON.stringify({ success: false, message: 'Space already exists' }),

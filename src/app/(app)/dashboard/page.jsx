@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
-import { Loader2, RefreshCcw } from 'lucide-react';
+import { Loader2, RefreshCcw, ShowerHead } from 'lucide-react';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -23,11 +23,27 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogClose,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+
 
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+    const [spacename, setSpaceName] = useState('');
+    const [spaces, setSpaces] = useState([]);
 
     const { toast } = useToast();
 
@@ -184,9 +200,9 @@ function UserDashboard() {
 
     const exportData_json = async () => {
         if (!session || !session.user) return;
-    
+
         fetchMessages();
-    
+
         if (messages.length === 0) {
             toast({
                 title: 'No Data',
@@ -195,7 +211,7 @@ function UserDashboard() {
             });
             return;
         }
-    
+
         const jsonContent = JSON.stringify(messages, null, 2);
         const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -205,7 +221,7 @@ function UserDashboard() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    
+
         toast({
             title: 'Export Successful',
             description: 'Messages have been exported to JSON.',
@@ -216,9 +232,9 @@ function UserDashboard() {
     // Create a new space
     const createSpace = async () => {
         try {
-            const response = await axios.post('/api/create-spaces',{
+            const response = await axios.post('/api/create-spaces', {
                 username: session.user.username,
-                space:'default'
+                space: spacename
             });
             if (response.data.success) {
                 toast({
@@ -239,13 +255,68 @@ function UserDashboard() {
         }
     }
 
+    //Get spaces for a user
+    const getSpaces = async () => {
+        try {
+            const response = await axios.get('/api/get-spaces');
+
+            if (response.data.spaces) {
+                setSpaces(response.data.spaces);
+                console.log(response.data.spaces);
+            } else {
+                throw new Error('Spaces data not found in response');
+            }
+        } catch (error) {
+            console.error('Error fetching spaces:', error);
+
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'Failed to get spaces',
+                variant: 'destructive',
+            });
+        }
+    };
+
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
-            <Button onClick={createSpace}>Create Space</Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline">Create Space</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Edit profile</DialogTitle>
+                        <DialogDescription>
+                            Make changes to your profile here. Click save when you're done.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="space name" className="text-right">
+                                Space Name
+                            </Label>
+                            <Input
+                                id="spacename"
+                                defaultValue="default"
+                                className="col-span-3"
+                                value={spacename}
+                                onChange={(e) => setSpaceName(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose>
+                            <Button type="submit" onClick={createSpace}>Create Space</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
-            <Separator  className='mt-6'/>
+            <Button onClick={getSpaces}>Show Spaces</Button>
+
+            <Separator className='mt-6' />
             <div className="mb-4">
                 <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
                 <div className="flex items-center">
@@ -310,7 +381,7 @@ function UserDashboard() {
                     <p>No messages to display.</p>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
