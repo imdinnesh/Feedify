@@ -6,8 +6,9 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
-import { Loader2, RefreshCcw, Copy, PlusCircle } from 'lucide-react';
+import axios, { AxiosError } from 'axios';
+import { Loader2, RefreshCcw, ShowerHead } from 'lucide-react';
+import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,7 +39,9 @@ import { Label } from "@/components/ui/label"
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -50,6 +53,7 @@ function UserDashboard() {
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
     const [activeSpace, setActiveSpace] = useState('')
+
 
     const { toast } = useToast();
 
@@ -72,9 +76,12 @@ function UserDashboard() {
             const response = await axios.get('/api/accept-messages');
             setValue('acceptMessages', response.data.isAcceptingMessages);
         } catch (error) {
+            const axiosError = error;
             toast({
                 title: 'Error',
-                description: error.response?.data.message ?? 'Failed to fetch message settings',
+                description:
+                    axiosError.response?.data.message ??
+                    'Failed to fetch message settings',
                 variant: 'destructive',
             });
         } finally {
@@ -85,9 +92,12 @@ function UserDashboard() {
     const fetchMessages = useCallback(
         async (refresh) => {
             setIsLoading(true);
+            setIsSwitchLoading(false);
             try {
                 const response = await axios.get('/api/get-messages', {
-                    params: { space_name: activeSpace }
+                    params: {
+                        space_name: activeSpace
+                    },
                 });
                 setMessages(response.data.messages || []);
                 if (refresh) {
@@ -97,18 +107,22 @@ function UserDashboard() {
                     });
                 }
             } catch (error) {
+                const axiosError = error;
                 toast({
                     title: 'Empty',
-                    description: error.response?.data.message ?? 'Failed to fetch messages',
+                    description:
+                        axiosError.response?.data.message ?? 'Failed to fetch messages',
                     variant: 'destructive',
                 });
             } finally {
                 setIsLoading(false);
+                setIsSwitchLoading(false);
             }
         },
-        [toast, activeSpace]
+        [setIsLoading, setMessages, toast, setActiveSpace, activeSpace]
     );
 
+    // Create a new space
     const createSpace = async () => {
         try {
             const response = await axios.post('/api/create-spaces', {
@@ -124,39 +138,51 @@ function UserDashboard() {
                 });
             }
         } catch (error) {
+            const axiosError = error;
             toast({
                 title: 'Error',
-                description: error.response?.data.message ?? 'Failed to create a new space',
+                description:
+                    axiosError.response?.data.message ??
+                    'Failed to create a new space',
                 variant: 'destructive',
             });
         }
     }
 
-    const getSpaces = useCallback(async () => {
-        try {
-            const response = await axios.get('/api/get-spaces');
-            if (response.data.spaces) {
-                setSpaces(response.data.spaces);
-            } else {
-                throw new Error('Spaces data not found in response');
-            }
-        } catch (error) {
-            console.error('Error fetching spaces:', error);
-            toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to get spaces',
-                variant: 'destructive',
-            });
-        }
-    }, [toast]);
+    const getSpaces = useCallback(
+        async (refresh) => {
+            try {
+                const response = await axios.get('/api/get-spaces');
 
+                if (response.data.spaces) {
+                    setSpaces(response.data.spaces);
+                } else {
+                    throw new Error('Spaces data not found in response');
+                }
+            } catch (error) {
+                console.error('Error fetching spaces:', error);
+
+                toast({
+                    title: 'Error',
+                    description: error.response?.data?.message || 'Failed to get spaces',
+                    variant: 'destructive',
+                });
+            }
+
+
+
+        }, [setSpaces, toast, createSpace])
+
+    // Fetch initial state from the server
     useEffect(() => {
         if (!session || !session.user) return;
+
         fetchMessages();
         getSpaces();
         fetchAcceptMessages();
-    }, [session, fetchAcceptMessages, fetchMessages, getSpaces]);
+    }, [session, setValue, toast, fetchAcceptMessages, fetchMessages, setActiveSpace]);
 
+    // Handle switch change
     const handleSwitchChange = async () => {
         try {
             const response = await axios.post('/api/accept-messages', {
@@ -168,9 +194,12 @@ function UserDashboard() {
                 variant: 'default',
             });
         } catch (error) {
+            const axiosError = error;
             toast({
                 title: 'Error',
-                description: error.response?.data.message ?? 'Failed to update message settings',
+                description:
+                    axiosError.response?.data.message ??
+                    'Failed to update message settings',
                 variant: 'destructive',
             });
         }
@@ -181,6 +210,7 @@ function UserDashboard() {
     }
 
     const { username } = session.user;
+
     const baseUrl = `${window.location.protocol}//${window.location.host}`;
     const profileUrl = `${baseUrl}/${username}/${activeSpace}`;
 
@@ -192,9 +222,14 @@ function UserDashboard() {
         });
     };
 
-    const exportData = async (format) => {
+    // Export data
+    const exportData_csv = async () => {
+
+
         if (!session || !session.user) return;
-        await fetchMessages();
+
+        fetchMessages();
+
 
         if (messages.length === 0) {
             toast({
@@ -204,60 +239,87 @@ function UserDashboard() {
             });
             return;
         }
-        const activeMessages = messages.filter((message) => message.space_name === activeSpace);
 
-        let content, type, filename;
-        if (format === 'csv') {
-            content = [
-                ['ID', 'Text', 'Date'],
-                ...activeMessages.map((message, idx) => [idx, message.content, dayjs(message.createdAt).format('MMM D, YYYY h:mm A')])
-            ]
-                .map(e => e.join(','))
-                .join('\n');
-            type = 'text/csv;charset=utf-8;';
-            filename = 'messages.csv';
-        } else {
-            content = JSON.stringify(activeMessages, null, 2);
-            type = 'application/json;charset=utf-8;';
-            filename = 'messages.json';
-        }
+        const csvContent = [
+            ['ID', 'Text', 'Date'], // Header row
+            ...messages.map((message, idx) => [idx, message.content, dayjs(message.createdAt).format('MMM D, YYYY h:mm A')]) // Data rows
+        ]
+            .map(e => e.join(','))
+            .join('\n');
 
-        const blob = new Blob([content], { type });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', filename);
+        link.setAttribute('download', 'messages.csv');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
         toast({
             title: 'Export Successful',
-            description: `Messages have been exported to ${format.toUpperCase()}.`,
+            description: 'Messages have been exported to CSV.',
             variant: 'success',
         });
     };
 
-    const activeMessages = messages.filter((message) => message.space_name === activeSpace);
+    const exportData_json = async () => {
+        if (!session || !session.user) return;
+
+        fetchMessages();
+
+        if (messages.length === 0) {
+            toast({
+                title: 'No Data',
+                description: 'There are no messages to export.',
+                variant: 'warning',
+            });
+            return;
+        }
+
+        const jsonContent = JSON.stringify(messages, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'messages.json');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+            title: 'Export Successful',
+            description: 'Messages have been exported to JSON.',
+            variant: 'success',
+        });
+    };
+
+    const handleSelectvalueChange = (value) => {
+        setActiveSpace(value);
+
+    }
+
+    const activeMessage = messages.filter((message) => message.space_name === activeSpace);
 
     return (
-        <div className="my-8 mx-auto p-8 bg-white rounded-lg shadow-md w-full max-w-6xl">
-            <h1 className="text-4xl font-bold mb-8 text-gray-800">User Dashboard</h1>
+        <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl shadow-lg">
+            <header className="mb-8">
+                <h1 className="text-4xl font-bold mb-2">User Dashboard</h1>
+                <p className="text-gray-600">Manage your spaces and messages efficiently.</p>
+            </header>
 
-            <div className="mb-8 space-y-6">
-                <div className="flex items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h2 className="text-2xl font-semibold mb-4">Spaces</h2>
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="flex items-center">
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Create Space
-                            </Button>
+                            <Button variant="outline">Create Space</Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
-                                <DialogTitle>Create New Space</DialogTitle>
+                                <DialogTitle>Create a New Space</DialogTitle>
                                 <DialogDescription>
-                                    Enter a name for your new space.
+                                    Enter the name of the new space you want to create.
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
@@ -267,105 +329,112 @@ function UserDashboard() {
                                     </Label>
                                     <Input
                                         id="spacename"
-                                        placeholder="Enter space name"
                                         className="col-span-3"
+                                        type="text"
                                         onChange={(e) => setSpaceName(e.target.value)}
                                     />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button onClick={createSpace}>Create Space</Button>
-                                </DialogClose>
+                                <Button type="submit" onClick={createSpace}>Create Space</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-
-                    {spaces.length > 0 && (
-                        <Select onValueChange={setActiveSpace}>
-                            <SelectTrigger className="w-[200px]">
-                                <SelectValue placeholder="Choose Space" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {spaces.map((space, key) => (
-                                    <SelectItem key={key} value={space}>
-                                        {space}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    )}
+                    <div className="mt-4">
+                        {spaces.length > 0 ? (
+                            <Select onValueChange={handleSelectvalueChange}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Choose Space" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {spaces.map((space, key) => (
+                                        <SelectItem key={key} value={space}>
+                                            {space}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <p className="text-gray-600">No spaces available. Create one to get started.</p>
+                        )}
+                    </div>
                 </div>
 
-                <div className="bg-gray-100 p-4 rounded-md">
-                    <h2 className="text-lg font-semibold mb-2">Your Unique Link</h2>
+                <div>
+                    <h2 className="text-2xl font-semibold mb-4">Profile Link</h2>
                     <div className="flex items-center">
                         <input
                             type="text"
                             value={profileUrl}
-                            readOnly
-                            className="flex-grow p-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            disabled
+                            className="input input-bordered w-full p-2 mr-2"
                         />
-                        <Button onClick={copyToClipboard} className="rounded-l-none">
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy
-                        </Button>
+                        <Button onClick={copyToClipboard}>Copy</Button>
                     </div>
                 </div>
+            </div>
 
-                <div className="flex items-center space-x-4">
+            <Separator className="mb-8" />
+
+            <div className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4">Message Settings</h2>
+                <div className="flex items-center">
                     <Switch
                         {...register('acceptMessages')}
                         checked={acceptMessages}
                         onCheckedChange={handleSwitchChange}
                         disabled={isSwitchLoading}
                     />
-                    <span className="font-medium">
+                    <span className="ml-2">
                         Accept Messages: {acceptMessages ? 'On' : 'Off'}
                     </span>
                 </div>
             </div>
 
-            <Separator className="my-8" />
+            <Separator className="mb-8" />
 
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center mb-8">
                 <Button
                     variant="outline"
-                    onClick={() => fetchMessages(true)}
-                    disabled={isLoading}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        fetchMessages(true);
+                    }}
                 >
                     {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                        <RefreshCcw className="h-4 w-4 mr-2" />
+                        <RefreshCcw className="h-4 w-4" />
                     )}
-                    Refresh Messages
+                    <span className="ml-2">Refresh Messages</span>
                 </Button>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline">Export Data</Button>
+                    <DropdownMenuTrigger className="ml-6 px-4 py-2 rounded-md bg-slate-800 text-gray-100">
+                        Export
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuLabel>Choose format</DropdownMenuLabel>
+                        <DropdownMenuLabel>Export data as</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => exportData('json')}>JSON</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => exportData('csv')}>CSV</DropdownMenuItem>
+                        <DropdownMenuItem onClick={exportData_json}>JSON</DropdownMenuItem>
+                        <DropdownMenuItem onClick={exportData_csv}>CSV</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {activeMessages.length > 0 ? (
-                    activeMessages.map((message) => (
-                        <MessageCard
-                            key={message._id}
-                            message={message}
-                            onMessageDelete={handleDeleteMessage}
-                        />
-                    ))
+                {activeMessage.length > 0 ? (
+                    activeMessage.map((message, index) => {
+                        return (
+                            <MessageCard
+                                key={message._id}
+                                message={message}
+                                onMessageDelete={handleDeleteMessage}
+                            />
+                        );
+                    })
                 ) : (
-                    <p className="text-gray-500 col-span-2 text-center py-8">No messages to display.</p>
+                    <p className="text-gray-600">No messages to display.</p>
                 )}
             </div>
         </div>
