@@ -36,7 +36,15 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
@@ -44,6 +52,8 @@ function UserDashboard() {
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
+    const [activeSpace,setActiveSpace]=useState('')
+
 
     const { toast } = useToast();
 
@@ -108,12 +118,63 @@ function UserDashboard() {
         [setIsLoading, setMessages, toast]
     );
 
+    // Create a new space
+    const createSpace = async () => {
+        try {
+            const response = await axios.post('/api/create-spaces', {
+                username: session.user.username,
+                space: spacename
+            });
+            setSpaces([...spaces, spacename]);
+            if (response.data.success) {
+                toast({
+                    title: 'Space Created',
+                    description: 'A new space has been created.',
+                    variant: 'success',
+                });
+            }
+        } catch (error) {
+            const axiosError = error;
+            toast({
+                title: 'Error',
+                description:
+                    axiosError.response?.data.message ??
+                    'Failed to create a new space',
+                variant: 'destructive',
+            });
+        }
+    }
+
+    const getSpaces = useCallback(
+        async (refresh) => {
+            try {
+                const response = await axios.get('/api/get-spaces');
+
+                if (response.data.spaces) {
+                    setSpaces(response.data.spaces);
+                } else {
+                    throw new Error('Spaces data not found in response');
+                }
+            } catch (error) {
+                console.error('Error fetching spaces:', error);
+
+                toast({
+                    title: 'Error',
+                    description: error.response?.data?.message || 'Failed to get spaces',
+                    variant: 'destructive',
+                });
+            }
+
+
+
+        }, [setSpaces, toast,createSpace])
+
     // Fetch initial state from the server
     useEffect(() => {
         if (!session || !session.user) return;
 
         fetchMessages();
-
+        getSpaces();
         fetchAcceptMessages();
     }, [session, setValue, toast, fetchAcceptMessages, fetchMessages]);
 
@@ -147,7 +208,7 @@ function UserDashboard() {
     const { username } = session.user;
 
     const baseUrl = `${window.location.protocol}//${window.location.host}`;
-    const profileUrl = `${baseUrl}/u/${username}`;
+    const profileUrl = `${baseUrl}/${username}/${activeSpace}`;
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(profileUrl);
@@ -229,53 +290,10 @@ function UserDashboard() {
         });
     };
 
-    // Create a new space
-    const createSpace = async () => {
-        try {
-            const response = await axios.post('/api/create-spaces', {
-                username: session.user.username,
-                space: spacename
-            });
-            if (response.data.success) {
-                toast({
-                    title: 'Space Created',
-                    description: 'A new space has been created.',
-                    variant: 'success',
-                });
-            }
-        } catch (error) {
-            const axiosError = error;
-            toast({
-                title: 'Error',
-                description:
-                    axiosError.response?.data.message ??
-                    'Failed to create a new space',
-                variant: 'destructive',
-            });
-        }
+    const handleSelectvalueChange = (value) => {
+        setActiveSpace(value);
+
     }
-
-    //Get spaces for a user
-    const getSpaces = async () => {
-        try {
-            const response = await axios.get('/api/get-spaces');
-
-            if (response.data.spaces) {
-                setSpaces(response.data.spaces);
-                console.log(response.data.spaces);
-            } else {
-                throw new Error('Spaces data not found in response');
-            }
-        } catch (error) {
-            console.error('Error fetching spaces:', error);
-
-            toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to get spaces',
-                variant: 'destructive',
-            });
-        }
-    };
 
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
@@ -301,8 +319,9 @@ function UserDashboard() {
                                 id="spacename"
                                 defaultValue="default"
                                 className="col-span-3"
-                                value={spacename}
+                                type="text"
                                 onChange={(e) => setSpaceName(e.target.value)}
+                                
                             />
                         </div>
                     </div>
@@ -313,8 +332,20 @@ function UserDashboard() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-
-            <Button onClick={getSpaces}>Show Spaces</Button>
+            <div>
+                <Select onValueChange={handleSelectvalueChange}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Choose Space" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {spaces.map((space,key) => (
+                            <SelectItem key={key} value={space}>
+                                {space}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
             <Separator className='mt-6' />
             <div className="mb-4">
