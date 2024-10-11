@@ -35,6 +35,7 @@ const initialMessageString =
 export default function SendMessage() {
     const params = useParams();
     const username = params.username;
+    const spacename=params.spacename;
 
 
     const form = useForm({
@@ -55,6 +56,7 @@ export default function SendMessage() {
             const response = await axios.post('/api/send-message', {
                 ...data,
                 username,
+                spacename
             });
 
             toast({

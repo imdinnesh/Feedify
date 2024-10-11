@@ -8,6 +8,16 @@ export async function GET(request) {
     await dbConnect();
     const session = await getServerSession(authOptions);
     const _user = session?.user;
+    const searchParams = request.nextUrl.searchParams
+    const space_name = searchParams.get('space_name')
+    console.log(space_name);
+
+    if (!space_name) {
+        return Response.json(
+            { message: 'Space name is required', success: false },
+            { status: 400 }
+        );
+    }
 
     if (!session || !_user) {
         return Response.json(
@@ -20,6 +30,7 @@ export async function GET(request) {
         const user = await UserModel.aggregate([
             { $match: { _id: userId } },
             { $unwind: '$messages' },
+            { $match: { 'messages.space_name': space_name } },
             { $sort: { 'messages.createdAt': -1 } },
             { $group: { _id: '$_id', messages: { $push: '$messages' } } },
         ]).exec();

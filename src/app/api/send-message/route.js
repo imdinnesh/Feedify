@@ -3,7 +3,7 @@ import UserModel from "@/models/User";
 
 export async function POST(request) {
     await dbConnect();
-    const { username, content } = await request.json();
+    const { username, content,spacename } = await request.json();
 
     try {
         const user = await UserModel.findOne({ username }).exec();
@@ -23,7 +23,7 @@ export async function POST(request) {
             );
         }
 
-        const newMessage = { content, createdAt: new Date() };
+        const newMessage = { content,space_name:spacename, createdAt: new Date() };
 
         // Push the new message to the user's messages array
         user.messages.push(newMessage);

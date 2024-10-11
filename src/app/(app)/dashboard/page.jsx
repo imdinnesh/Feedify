@@ -52,7 +52,7 @@ function UserDashboard() {
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
-    const [activeSpace,setActiveSpace]=useState('')
+    const [activeSpace, setActiveSpace] = useState('')
 
 
     const { toast } = useToast();
@@ -94,7 +94,11 @@ function UserDashboard() {
             setIsLoading(true);
             setIsSwitchLoading(false);
             try {
-                const response = await axios.get('/api/get-messages');
+                const response = await axios.get('/api/get-messages', {
+                    params: {
+                        space_name: activeSpace
+                    },
+                });
                 setMessages(response.data.messages || []);
                 if (refresh) {
                     toast({
@@ -115,7 +119,7 @@ function UserDashboard() {
                 setIsSwitchLoading(false);
             }
         },
-        [setIsLoading, setMessages, toast]
+        [setIsLoading, setMessages, toast, setActiveSpace, activeSpace]
     );
 
     // Create a new space
@@ -167,7 +171,7 @@ function UserDashboard() {
 
 
 
-        }, [setSpaces, toast,createSpace])
+        }, [setSpaces, toast, createSpace])
 
     // Fetch initial state from the server
     useEffect(() => {
@@ -176,7 +180,7 @@ function UserDashboard() {
         fetchMessages();
         getSpaces();
         fetchAcceptMessages();
-    }, [session, setValue, toast, fetchAcceptMessages, fetchMessages]);
+    }, [session, setValue, toast, fetchAcceptMessages, fetchMessages, setActiveSpace]);
 
     // Handle switch change
     const handleSwitchChange = async () => {
@@ -295,6 +299,8 @@ function UserDashboard() {
 
     }
 
+    const activeMessage = messages.filter((message) => message.space_name === activeSpace);
+
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
@@ -321,7 +327,7 @@ function UserDashboard() {
                                 className="col-span-3"
                                 type="text"
                                 onChange={(e) => setSpaceName(e.target.value)}
-                                
+
                             />
                         </div>
                     </div>
@@ -333,18 +339,21 @@ function UserDashboard() {
                 </DialogContent>
             </Dialog>
             <div>
-                <Select onValueChange={handleSelectvalueChange}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Choose Space" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {spaces.map((space,key) => (
-                            <SelectItem key={key} value={space}>
-                                {space}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                {
+                    spaces.length > 0 ? (<Select onValueChange={handleSelectvalueChange}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Choose Space" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {
+                                spaces.map((space, key) => (
+                                    <SelectItem key={key} value={space}>
+                                        {space}
+                                    </SelectItem>
+                                ))}
+                        </SelectContent>
+                    </Select>) : <></>
+                }
             </div>
 
             <Separator className='mt-6' />
@@ -400,14 +409,16 @@ function UserDashboard() {
             </DropdownMenu>
 
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {messages.length > 0 ? (
-                    messages.map((message, index) => (
-                        <MessageCard
-                            key={message._id}
-                            message={message}
-                            onMessageDelete={handleDeleteMessage}
-                        />
-                    ))
+                {activeMessage.length > 0 ? (
+                    activeMessage.map((message, index) => {
+                        return (
+                            <MessageCard
+                                key={message._id}
+                                message={message}
+                                onMessageDelete={handleDeleteMessage}
+                            />
+                        );
+                    })
                 ) : (
                     <p>No messages to display.</p>
                 )}
