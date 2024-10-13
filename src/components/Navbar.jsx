@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from './ui/button';
 import { User } from 'next-auth';
+import { Mail } from 'lucide-react';
 
 function Navbar() {
     const { data: session } = useSession();
@@ -13,9 +14,11 @@ function Navbar() {
     return (
         <nav className="p-4 md:p-6 shadow-md bg-gray-900 text-white">
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-                <a href="#" className="text-xl font-bold mb-4 md:mb-0">
-                    True Feedback
-                </a>
+                <div className='flex items-center space-x-2'>
+                    <Mail className="h-8 w-8 text-blue-400" />
+                    <a href="#" className="text-2xl font-bold mb-4 md:mb-0">Feedify</a>
+
+                </div>
                 {session ? (
                     <>
                         <span className="mr-4">

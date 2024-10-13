@@ -1,17 +1,38 @@
 [
     {
-        "title": "Message from User123",
-        "content": "Hey, how are you doing today?",
-        "received": "10 minutes ago"
+        "title": "Game-Changing Insights",
+        "content": "Feedify has revolutionized how we understand our customers. The AI-powered analysis provides insights we never knew we needed!",
+        "author": "Sarah J., Product Manager at TechCorp",
+        "received": "2 days ago"
     },
     {
-        "title": "Message from SecretAdmirer",
-        "content": "I really liked your recent post!",
-        "received": "2 hours ago"
+        "title": "Streamlined Feedback Process",
+        "content": "Setting up dedicated spaces for each of our products has made managing feedback so much easier. Our team loves the organization!",
+        "author": "Michael L., CEO of StartupX",
+        "received": "1 week ago"
     },
     {
-        "title": "Message from MysteryGuest",
-        "content": "Do you have any book recommendations?",
-        "received": "1 day ago"
+        "title": "Real-Time Analytics Rock",
+        "content": "The real-time analytics have been a game-changer for our agile development process. We can spot trends and act on them immediately.",
+        "author": "Emily R., Scrum Master at AgileDevs",
+        "received": "3 days ago"
+    },
+    {
+        "title": "Customer-Centric Decisions",
+        "content": "Feedify has helped us become truly customer-centric. The insights we've gained have directly influenced our product roadmap.",
+        "author": "David K., CTO of InnovateCo",
+        "received": "5 days ago"
+    },
+    {
+        "title": "Unexpected Patterns Discovered",
+        "content": "The AI analysis uncovered patterns in our customer feedback that we had completely missed. It's like having a data scientist on the team!",
+        "author": "Lisa M., UX Researcher at DesignPro",
+        "received": "2 weeks ago"
+    },
+    {
+        "title": "Improved Customer Satisfaction",
+        "content": "Since implementing Feedify, our customer satisfaction scores have increased by 22%. The ability to quickly act on feedback has been crucial.",
+        "author": "Robert T., Customer Success Lead at HappyClients",
+        "received": "1 month ago"
     }
 ]
