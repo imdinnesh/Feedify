@@ -63,9 +63,9 @@ export default function SignInForm() {
             <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
                 <div className="text-center">
                     <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-                        Welcome Back to True Feedback
+                        Welcome Back to Feedify Feedback
                     </h1>
-                    <p className="mb-4">Sign in to continue your secret conversations</p>
+                    <p className="mb-4">Sign in to create spaces and share your unique link</p>
                 </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
