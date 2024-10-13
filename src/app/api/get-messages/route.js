@@ -10,7 +10,6 @@ export async function GET(request) {
     const _user = session?.user;
     const searchParams = request.nextUrl.searchParams
     const space_name = searchParams.get('space_name')
-    console.log(space_name);
 
     if (!space_name) {
         return Response.json(

@@ -21,6 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {X } from 'lucide-react';
 
 import {
     Dialog,
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { MessageSquare } from 'lucide-react';
 
 import {
     Select,
@@ -50,6 +52,7 @@ function UserDashboard() {
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
     const [activeSpace, setActiveSpace] = useState('')
+    const [summary, setSummary] = useState('');
 
     const { toast } = useToast();
 
@@ -239,6 +242,31 @@ function UserDashboard() {
     };
 
     const activeMessages = messages.filter((message) => message.space_name === activeSpace);
+    const summarizeMessages = async () => {
+        try {
+            const response = await axios.post('/api/summarize-messages', {
+                messages: activeMessages.map(message => message.content),
+            });
+            // console.log(response.data.summary);
+            setSummary(response.data.summary);
+            toast({
+                title: 'Summary Generated',
+                description: 'Your messages have been summarized.',
+                variant: 'success',
+            });
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data.message ?? 'Failed to summarize messages',
+                variant: 'destructive',
+            });
+        }
+    };
+
+    const clearSummary = () => {
+        setSummary('');
+    }
+
 
     return (
         <div className="my-8 mx-auto p-8 bg-white rounded-lg shadow-md w-full max-w-6xl">
@@ -341,19 +369,46 @@ function UserDashboard() {
                     )}
                     Refresh Messages
                 </Button>
+                <div className='flex space-x-2'>
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline">Export Data</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuLabel>Choose format</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => exportData('json')}>JSON</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => exportData('csv')}>CSV</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">Export Data</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>Choose format</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => exportData('json')}>JSON</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => exportData('csv')}>CSV</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                        onClick={summarizeMessages}
+                        className="bg-black hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <MessageSquare className="w-5 h-5" />
+                        )}
+                        <span>Summarise Messages</span>
+                    </Button>
+                </div>
+
             </div>
+            {summary && (
+                <div className="my-8 p-4 bg-gray-100 rounded-md relative">
+                    <h2 className="text-lg font-semibold mb-2">Summary</h2>
+                    <p>{summary}</p>
+                    <button
+                        onClick={clearSummary}
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
+                        aria-label="Close summary"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {activeMessages.length > 0 ? (
