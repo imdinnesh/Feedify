@@ -73,7 +73,7 @@ export default function Home() {
                     <CardContent className="flex items-start space-x-4">
                       <Mail className="flex-shrink-0 text-gray-500 mt-1" />
                       <div>
-                        <p className="text-gray-300 italic">"{message.content}"</p>
+                        <p className="text-gray-300 italic">&quot;{message.content}&quot;</p>
                         <p className="text-sm text-gray-500 mt-2">
                           {message.received}
                         </p>
@@ -135,7 +135,7 @@ export default function Home() {
           </div>
         </div>
         <div className="border-t border-gray-800 pt-4">
-          © 2024 Feedify Feedback. All rights reserved.
+          &copy; 2024 Feedify Feedback. All rights reserved.
         </div>
       </footer>
     </div>
