@@ -21,7 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import {
     Dialog,
@@ -210,33 +210,34 @@ function UserDashboard() {
         const activeMessages = messages.filter((message) => message.space_name === activeSpace);
 
         let content, type, filename;
-        if (format === 'csv') {
-            content = [
-                ['ID', 'Text', 'Date'],
-                ...activeMessages.map((message, idx) => [idx, message.content, dayjs(message.createdAt).format('MMM D, YYYY h:mm A')])
-            ]
-                .map(e => e.join(','))
-                .join('\n');
-            type = 'text/csv;charset=utf-8;';
-            filename = 'messages.csv';
-        } else {
+
+        // Add logic to handle different formats (e.g., JSON, CSV)
+        if (format === 'json') {
             content = JSON.stringify(activeMessages, null, 2);
-            type = 'application/json;charset=utf-8;';
+            type = 'application/json';
             filename = 'messages.json';
+        } else if (format === 'csv') {
+            // Convert messages to CSV format
+            const csvHeaders = Object.keys(activeMessages[0]).join(',');
+            const csvRows = activeMessages.map(msg => Object.values(msg).join(',')).join('\n');
+            content = `${csvHeaders}\n${csvRows}`;
+            type = 'text/csv';
+            filename = 'messages.csv';
         }
 
         const blob = new Blob([content], { type });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
         toast({
             title: 'Export Successful',
-            description: `Messages have been exported to ${format.toUpperCase()}.`,
+            description: `Messages have been exported as ${format.toUpperCase()}.`,
             variant: 'success',
         });
     };
