@@ -3,6 +3,7 @@ import './globals.css';
 import AuthProvider from '../context/AuthProvider';
 import QueryProviders from '@/context/QueryProvider';
 import { Toaster } from '@/components/ui/toaster';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,6 +20,7 @@ export default async function RootLayout({ children }) {
         <AuthProvider>
           <body className={inter.className}>
             {children}
+            <Analytics/>
             <Toaster />
           </body>
         </AuthProvider>
