@@ -34,6 +34,7 @@ const suggestedMessages = [
 export default function SendMessage() {
     const params = useParams();
     const { username } = params;
+    const {spacename}=params;
     const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm({
@@ -44,18 +45,23 @@ export default function SendMessage() {
     const onSubmit = async (data) => {
         setIsLoading(true);
         try {
-            // Simulating API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await axios.post('/api/send-message', {
+                ...data,
+                username,
+                spacename
+            });
+
             toast({
-                title: "Message sent successfully!",
-                description: "Your anonymous message has been delivered.",
+                title: response.data.message,
                 variant: 'default',
             });
-            form.reset();
+            form.reset({ ...form.getValues(), content: '' });
         } catch (error) {
+            const axiosError = error;
             toast({
-                title: "Error",
-                description: "Failed to send message. Please try again.",
+                title: 'Error',
+                description:
+                    axiosError.response?.data.message ?? 'Failed to sent message',
                 variant: 'destructive',
             });
         } finally {
