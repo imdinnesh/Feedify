@@ -8,7 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'True Feedback',
+  title: 'Feedify Feedback',
   description: 'Real feedback from real people.',
 };
 
