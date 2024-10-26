@@ -27,7 +27,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-black">
       <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 text-white">
         {/* Hero Section */}
-        <motion.section 
+        <motion.section
           initial="initial"
           animate="animate"
           variants={fadeIn}
@@ -39,14 +39,14 @@ export default function Home() {
           <p className="mt-7 text-xl text-gray-400 mb-8">
             Seamlessly gather and analyze feedback with AI to gain deeper insights into your products. Create dedicated spaces for each product and share unique public links with your customers.
           </p>
-          <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300" onClick={()=>router.push('/sign-up')}>
+          <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300" onClick={() => router.push('/sign-up')}>
             Get Started Free
           </Button>
         </motion.section>
 
         {/* Features Section */}
         <section id="features" className="w-full max-w-5xl mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="text-3xl font-bold mb-8 text-center text-gray-100"
@@ -67,8 +67,8 @@ export default function Home() {
               >
                 <Card className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-all duration-300">
                   <CardHeader>
-                    <feature.icon className="h-12 w-12 text-gray-400 mb-4" />
-                    <CardTitle className="text-xl font-semibold text-gray-100">{feature.title}</CardTitle>
+                    <feature.icon className="h-12 w-12 text-blue-400 mb-4 hover:text-yellow-400 transition-colors duration-300" />
+                    <CardTitle className="text-xl font-semibold text-white">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-400">{feature.description}</p>
@@ -81,7 +81,7 @@ export default function Home() {
 
         {/* Testimonials Carousel */}
         <section id="testimonials" className="w-full max-w-3xl mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             className="text-3xl font-bold mb-8 text-center text-gray-100"
@@ -112,20 +112,20 @@ export default function Home() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
+            <CarouselPrevious className="hidden md:flex text-black" />
+            <CarouselNext className="hidden md:flex text-black" />
           </Carousel>
         </section>
 
         {/* Call to Action */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           className="text-center mb-16"
         >
           <h2 className="text-3xl font-bold mb-4 text-gray-100">Ready to Transform Your Feedback Process?</h2>
           <p className="text-xl text-gray-400 mb-8">Join thousands of satisfied customers and start gathering insights today.</p>
-          <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center" onClick={()=>router.push('/sign-up')}>
+          <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center" onClick={() => router.push('/sign-up')}>
             Start Your Free Trial <ArrowRight className="ml-2" />
           </Button>
         </motion.section>
