@@ -17,8 +17,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import { signInSchema } from '@/schemes/signInSchema';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function SignInForm() {
+
+    const [isLoading,setIsLoading]=useState(false);
+
+
     const router = useRouter();
 
     const form = useForm({
@@ -31,6 +37,7 @@ export default function SignInForm() {
 
     const { toast } = useToast();
     const onSubmit = async (data) => {
+        setIsLoading(true)
         const result = await signIn('credentials', {
             redirect: false,
             identifier: data.identifier,
@@ -38,6 +45,7 @@ export default function SignInForm() {
         });
 
         if (result?.error) {
+            setIsLoading(false)
             if (result.error === 'CredentialsSignin') {
                 toast({
                     title: 'Login Failed',
@@ -54,6 +62,7 @@ export default function SignInForm() {
         }
 
         if (result?.url) {
+            setIsLoading(true);
             router.replace('/dashboard');
         }
     };
@@ -91,7 +100,11 @@ export default function SignInForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button className='w-full' type="submit">Sign In</Button>
+                        <Button className='w-full' type="submit">Sign In
+                            {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                    ) : (<></>)}
+                        </Button>
                     </form>
                 </Form>
                 <div className="text-center mt-4">

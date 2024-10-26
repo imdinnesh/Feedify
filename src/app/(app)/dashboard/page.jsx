@@ -48,7 +48,10 @@ import {
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoading2, setIsLoading2] = useState(false);
+
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
     const [activeSpace, setActiveSpace] = useState('')
@@ -244,18 +247,21 @@ function UserDashboard() {
 
     const activeMessages = messages.filter((message) => message.space_name === activeSpace);
     const summarizeMessages = async () => {
+        setIsLoading2(true)
         try {
             const response = await axios.post('/api/summarize-messages', {
                 messages: activeMessages.map(message => message.content),
             });
             // console.log(response.data.summary);
             setSummary(response.data.summary);
+            setIsLoading2(false)
             toast({
                 title: 'Summary Generated',
                 description: 'Your messages have been summarized.',
                 variant: 'success',
             });
         } catch (error) {
+            setIsLoading2(false)
             toast({
                 title: 'Error',
                 description: error.response?.data.message ?? 'Failed to summarize messages',
@@ -387,7 +393,7 @@ function UserDashboard() {
                         onClick={summarizeMessages}
                         className="bg-black hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2"
                     >
-                        {isLoading ? (
+                        {isLoading2 ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                             <MessageSquare className="w-5 h-5" />
