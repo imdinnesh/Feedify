@@ -1,12 +1,13 @@
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
+import HeadingModel from '@/models/Heading';
 
 export async function POST(request) {
     // Connect to the database
     await dbConnect();
 
     try {
-        const { username, space } = await request.json();
+        const { username, space, heading} = await request.json();
         const user = await UserModel.findOne({ username }).exec();
 
         if (!user) {
@@ -20,6 +21,14 @@ export async function POST(request) {
                 JSON.stringify({ success: false, message: 'Space name cannot be empty' }),
                 { status: 400 }
             );
+        }
+
+        if(heading==''){
+            return new Response(
+                JSON.stringify({success:false,message:'Heading Question cannot be empty'}),
+                {status:400}
+
+            )
         }
 
 
@@ -36,6 +45,15 @@ export async function POST(request) {
         const newSpace = `${space}`;
         user.spaces.push(newSpace);
         await user.save();
+
+        const newHeading = new HeadingModel({
+            heading,
+            space_name: newSpace,
+            username
+        });
+
+        await newHeading.save();
+
 
         return new Response(
             JSON.stringify({ success: true, message: 'New Space Created Successfully' }),

@@ -55,6 +55,7 @@ function UserDashboard() {
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
     const [activeSpace, setActiveSpace] = useState('')
+    const [headingQues,setHeadingQues]=useState('');
     const [summary, setSummary] = useState('');
 
     const { toast } = useToast();
@@ -119,7 +120,8 @@ function UserDashboard() {
         try {
             const response = await axios.post('/api/create-spaces', {
                 username: session.user.username,
-                space: spacename
+                space: spacename,
+                heading:headingQues
             });
             setSpaces([...spaces, spacename]);
             if (response.data.success) {
@@ -292,7 +294,7 @@ function UserDashboard() {
                             <DialogHeader>
                                 <DialogTitle>Create New Space</DialogTitle>
                                 <DialogDescription>
-                                    Enter a name for your new space.
+                                    Enter a name and heading question for your space
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
@@ -305,6 +307,19 @@ function UserDashboard() {
                                         placeholder="Enter space name"
                                         className="col-span-3"
                                         onChange={(e) => setSpaceName(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid gap-4 py-2">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="spacename" className="text-right">
+                                        Heading Question
+                                    </Label>
+                                    <Input
+                                        id="headingQuestion"
+                                        placeholder="Enter heading question"
+                                        className="col-span-3"
+                                        onChange={(e) => setHeadingQues(e.target.value)}
                                     />
                                 </div>
                             </div>
