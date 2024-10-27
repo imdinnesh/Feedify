@@ -7,7 +7,7 @@ export async function POST(request) {
     await dbConnect();
 
     try {
-        const { username, space, heading} = await request.json();
+        const { username, space, title} = await request.json();
         const user = await UserModel.findOne({ username }).exec();
 
         if (!user) {
@@ -23,7 +23,7 @@ export async function POST(request) {
             );
         }
 
-        if(heading==''){
+        if(title==''){
             return new Response(
                 JSON.stringify({success:false,message:'Heading Question cannot be empty'}),
                 {status:400}
@@ -47,7 +47,7 @@ export async function POST(request) {
         await user.save();
 
         const newHeading = new HeadingModel({
-            heading,
+            title,
             space_name: newSpace,
             username
         });

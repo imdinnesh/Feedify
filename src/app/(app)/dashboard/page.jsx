@@ -121,7 +121,7 @@ function UserDashboard() {
             const response = await axios.post('/api/create-spaces', {
                 username: session.user.username,
                 space: spacename,
-                heading:headingQues
+                title:headingQues
             });
             setSpaces([...spaces, spacename]);
             if (response.data.success) {

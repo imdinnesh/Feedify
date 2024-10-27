@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -36,6 +36,7 @@ export default function SendMessage() {
     const { username } = params;
     const {spacename}=params;
     const [isLoading, setIsLoading] = useState(false);
+    const [title,setTitle]=useState('');
 
     const form = useForm({
         resolver: zodResolver(messageSchema),
@@ -69,12 +70,43 @@ export default function SendMessage() {
         }
     };
 
+    const getHeading=async()=>{
+        try {
+            const response = await axios.get('/api/get-heading', {
+                params: {
+                    username:username,
+                    spacename:spacename
+                }
+            });
+            const data=response.data.data;
+            setTitle(data[0].title);
+        } catch (error) {
+            const axiosError = error;
+            toast({
+                title: 'Error',
+                description:
+                    axiosError.response?.data.message ?? 'Failed to fetch headings',
+                variant: 'destructive',
+            });
+        }
+    }
+
+    useEffect(()=>{
+
+        getHeading();
+
+
+
+    },[])
+
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
             <Card className="w-full max-w-lg">
                 <CardHeader className="space-y-1">
                     <h1 className="text-2xl sm:text-3xl font-bold text-center text-primary">Send Anonymous Message</h1>
                     <p className="text-center text-muted-foreground">to @{username}</p>
+                    <Separator />
+                    <h2 className="text-lg font-semibold text-center text-primary">{title}</h2>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const HeadingSchema=new mongoose.Schema({
-    heading: {
+    title: {
         type: String,
         required: true,
     },
@@ -20,9 +20,7 @@ const HeadingSchema=new mongoose.Schema({
 });
 
 
-const HeadingModel =
-    (mongoose.models.heading) ||
-    mongoose.model('Heading', HeadingSchema);
+const HeadingModel = mongoose.models.Heading || mongoose.model('Heading', HeadingSchema);
 
 export default HeadingModel;
 
