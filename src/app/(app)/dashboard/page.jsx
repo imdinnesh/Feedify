@@ -282,31 +282,31 @@ function UserDashboard() {
 
 
     return (
-        <div className="min-h-screen bg-[#fafafa]">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
                 {/* Quick Stats Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white">
+                    <Card className="bg-gradient-to-br from-gray-500 to-gray-600 text-white transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-gray-200">
                         <CardContent className="p-6">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-indigo-100 text-sm">Total Messages</p>
+                                    <p className="text-gray-100 text-sm font-medium">Total Messages</p>
                                     <h3 className="text-3xl font-bold mt-1">{activeMessages.length}</h3>
                                 </div>
-                                <MessageSquare className="h-8 w-8 text-indigo-200" />
+                                <MessageSquare className="h-8 w-8 text-gray-200" />
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-white hover:shadow-lg transition-shadow duration-200">
+                    <Card className="bg-white hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100">
                         <CardContent className="p-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <p className="text-gray-500 text-sm">Active Space</p>
-                                    <h3 className="text-xl font-semibold mt-1">{activeSpace || 'None Selected'}</h3>
+                                    <p className="text-gray-500 text-sm font-medium">Active Space</p>
+                                    <h3 className="text-xl font-semibold mt-1 text-gray-800">{activeSpace || 'None Selected'}</h3>
                                 </div>
                                 <Select onValueChange={setActiveSpace}>
-                                    <SelectTrigger className="w-[140px] bg-gray-50 border-none">
+                                    <SelectTrigger className="w-[140px] bg-gray-50 border-gray-200 hover:border-gray-400 transition-colors">
                                         <SelectValue placeholder="Switch" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -321,12 +321,12 @@ function UserDashboard() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-white hover:shadow-lg transition-shadow duration-200">
+                    <Card className="bg-white hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100">
                         <CardContent className="p-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <p className="text-gray-500 text-sm">Message Status</p>
-                                    <h3 className="text-xl font-semibold mt-1">
+                                    <p className="text-gray-500 text-sm font-medium">Message Status</p>
+                                    <h3 className="text-xl font-semibold mt-1 text-gray-800">
                                         {acceptMessages ? 'Accepting' : 'Paused'}
                                     </h3>
                                 </div>
@@ -335,7 +335,7 @@ function UserDashboard() {
                                     checked={acceptMessages}
                                     onCheckedChange={handleSwitchChange}
                                     disabled={isSwitchLoading}
-                                    className="data-[state=checked]:bg-indigo-600"
+                                    className="data-[state=checked]:bg-gray-600"
                                 />
                             </div>
                         </CardContent>
@@ -343,11 +343,41 @@ function UserDashboard() {
                 </div>
 
                 {/* Action Bar */}
-                <div className="bg-white rounded-lg p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
-                    <div className="flex items-center gap-4">
+                <div className="bg-white rounded-lg shadow-lg p-6 mb-8 backdrop-blur-lg bg-opacity-95 border border-gray-100">
+                    {/* Share URL Section */}
+                    <div className="mb-6 pb-6 border-b border-gray-100">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Share2 className="h-5 w-5 text-gray-600" />
+                            <h3 className="font-semibold text-gray-800">Share Your Space</h3>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                                <div className="relative">
+                                    <Input
+                                        value={profileUrl}
+                                        readOnly
+                                        className="pr-28 bg-gray-50 border-gray-200 hover:border-gray-400 transition-colors text-gray-600"
+                                    />
+                                    <Button
+                                        onClick={copyToClipboard}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors gap-2 h-8"
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                        Copy
+                                    </Button>
+                                </div>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Share this URL to receive messages in your "{activeSpace || 'selected'}" space
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Actions Section */}
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button className="bg-indigo-600 hover:bg-indigo-700">
+                                <Button className="bg-gray-600 hover:bg-gray-700 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-gray-200">
                                     <PlusCircle className="h-4 w-4 mr-2" />
                                     New Space
                                 </Button>
@@ -379,7 +409,7 @@ function UserDashboard() {
                                 </div>
                                 <DialogFooter>
                                     <DialogClose asChild>
-                                        <Button onClick={createSpace} className="bg-indigo-600 hover:bg-indigo-700">
+                                        <Button onClick={createSpace} className="bg-gray-600 hover:bg-gray-700">
                                             Create Space
                                         </Button>
                                     </DialogClose>
@@ -387,76 +417,64 @@ function UserDashboard() {
                             </DialogContent>
                         </Dialog>
 
-                        <div className="flex-1 max-w-xl">
-                            <div className="relative">
-                                <Input
-                                    value={profileUrl}
-                                    readOnly
-                                    className="pr-24 bg-gray-50"
-                                />
-                                <Button
-                                    onClick={copyToClipboard}
-                                    className="absolute right-1 top-1 bottom-1 bg-gray-200 hover:bg-gray-300 text-gray-700"
-                                >
-                                    <Copy className="h-4 w-4" />
-                                </Button>
-                            </div>
+                        <div className="flex items-center gap-3">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="hover:border-gray-400 transition-colors border-gray-200">
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Export
+                                        <ChevronDown className="h-4 w-4 ml-2" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => exportData('json')}>
+                                        Export as JSON
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => exportData('csv')}>
+                                        Export as CSV
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            <Button
+                                onClick={summarizeMessages}
+                                className="bg-gray-600 hover:bg-gray-700 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-gray-200"
+                                disabled={isLoading2}
+                            >
+                                {isLoading2 ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                ) : (
+                                    <Sparkles className="h-5 w-5 mr-2 text-white-500" />
+                                )}
+                                Summarize
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => fetchMessages(true)}
+                                disabled={isLoading}
+                                className="hover:border-gray-400 hover:text-gray-700 transition-colors border-gray-200"
+                            >
+                                <RefreshCcw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                            </Button>
                         </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
-                                    <Download className="h-4 w-4 mr-2" />
-                                    Export
-                                    <ChevronDown className="h-4 w-4 ml-2" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => exportData('json')}>
-                                    Export as JSON
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => exportData('csv')}>
-                                    Export as CSV
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <Button
-                            onClick={summarizeMessages}
-                            className="bg-indigo-600 hover:bg-indigo-700"
-                            disabled={isLoading2}
-                        >
-                            {isLoading2 ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            ) : (
-                                <MessageSquare className="h-4 w-4 mr-2" />
-                            )}
-                            Summarize
-                        </Button>
-
-                        <Button
-                            variant="outline"
-                            onClick={() => fetchMessages(true)}
-                            disabled={isLoading}
-                        >
-                            <RefreshCcw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                        </Button>
                     </div>
                 </div>
 
                 {/* Summary Card */}
                 {summary && (
-                    <Card className="mb-8 bg-white">
+                    <Card className="mb-8 bg-white hover:shadow-xl transition-all duration-300 border border-gray-100">
                         <CardContent className="p-6 relative">
                             <div className="flex justify-between items-start mb-4">
-                                <h2 className="text-lg font-semibold text-gray-900">Message Summary</h2>
+                                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                                    <Sparkles className="h-5 w-5 mr-2 text-gray-500" />
+                                    Message Summary
+                                </h2>
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={clearSummary}
-                                    className="h-8 w-8 p-0"
+                                    className="h-8 w-8 p-0 hover:text-gray-700"
                                 >
                                     <X className="h-5 w-5" />
                                 </Button>
@@ -480,8 +498,8 @@ function UserDashboard() {
                         <div className="col-span-2">
                             <Card className="bg-white">
                                 <CardContent className="p-12 text-center">
-                                    <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <MessageSquare className="h-8 w-8 text-indigo-600" />
+                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <MessageSquare className="h-8 w-8 text-gray-600" />
                                     </div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No Messages Yet</h3>
                                     <p className="text-gray-500 max-w-sm mx-auto">
