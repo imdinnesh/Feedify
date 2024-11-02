@@ -23,13 +23,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schemes/messageSchema';
 
-const specialChar = '||';
-
-const suggestedMessages = [
-    "What's your favorite movie?",
-    "Do you have any pets?",
-    "What's your dream job?"
-];
 
 export default function SendMessage() {
     const params = useParams();
@@ -37,6 +30,7 @@ export default function SendMessage() {
     const {spacename}=params;
     const [isLoading, setIsLoading] = useState(false);
     const [title,setTitle]=useState('');
+    const [suggestedMessages, setSuggestedMessages] = useState([]);
 
     const form = useForm({
         resolver: zodResolver(messageSchema),
@@ -91,11 +85,27 @@ export default function SendMessage() {
         }
     }
 
+    const getSuggestedMessages = async () => {
+        try {
+
+            const response = await axios.get('/api/suggest-message', {
+                params: { message:title }
+            });
+
+            const data = response.data;
+
+            const array=data.suggestion.split(',');
+            setSuggestedMessages(array);
+
+        } catch (error) {
+            const axiosError = error;
+            console.log(axiosError);
+            return [];
+        }
+    }
+
     useEffect(()=>{
-
         getHeading();
-
-
 
     },[])
 
@@ -129,21 +139,24 @@ export default function SendMessage() {
                                 )}
                             />
                             <div className="flex flex-wrap gap-2">
-                                {suggestedMessages.map((msg, index) => (
+                                {suggestedMessages.map((message, index) => (
                                     <Button
                                         key={index}
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => form.setValue('content', msg)}
-                                        className="text-xs"
+                                        onClick={() => {
+                                            form.setValue('content', message);
+                                        }}
                                     >
-                                        {msg}
+                                        {message}
                                     </Button>
+
                                 ))}
                             </div>
                         </form>
                     </Form>
                 </CardContent>
+                <div className="flex flex-wrap"> 
+                    <Button className='mx-6 px-4 py-2' onClick={getSuggestedMessages}>Suggest Messages</Button>
+                </div>
                 <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4">
                     <Button
                         type="submit"
