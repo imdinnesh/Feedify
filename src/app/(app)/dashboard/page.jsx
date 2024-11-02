@@ -7,12 +7,17 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import { Loader2, RefreshCcw, Copy, PlusCircle } from 'lucide-react';
+import { 
+    Loader2, RefreshCcw, Copy, PlusCircle, MessageSquare, X, 
+    Settings, ChevronDown, Layout, Download, Bell, Grid, Users,
+    LineChart, Share2, Sparkles
+} from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AcceptMessageSchema } from '@/schemes/acceptSchema';
-import dayjs from 'dayjs';
+import { Card, CardContent } from '@/components/ui/card';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,7 +26,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { X } from 'lucide-react';
 
 import {
     Dialog,
@@ -32,10 +36,10 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { MessageSquare } from 'lucide-react';
+} from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import {
     Select,
@@ -43,7 +47,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
@@ -55,7 +59,7 @@ function UserDashboard() {
     const [spacename, setSpaceName] = useState('');
     const [spaces, setSpaces] = useState([]);
     const [activeSpace, setActiveSpace] = useState('')
-    const [headingQues,setHeadingQues]=useState('');
+    const [headingQues, setHeadingQues] = useState('');
     const [summary, setSummary] = useState('');
 
     const { toast } = useToast();
@@ -121,7 +125,7 @@ function UserDashboard() {
             const response = await axios.post('/api/create-spaces', {
                 username: session.user.username,
                 space: spacename,
-                title:headingQues
+                title: headingQues
             });
             setSpaces([...spaces, spacename]);
             if (response.data.success) {
@@ -278,172 +282,216 @@ function UserDashboard() {
 
 
     return (
-        <div className="my-8 mx-auto p-8 bg-white rounded-lg shadow-md w-full max-w-6xl">
-            <h1 className="text-4xl font-bold mb-8 text-gray-800">User Dashboard</h1>
-
-            <div className="mb-8 space-y-6">
-                <div className="flex items-center justify-between">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="flex items-center">
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Create Space
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Create New Space</DialogTitle>
-                                <DialogDescription>
-                                    Enter a name and heading question for your space
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="spacename" className="text-right">
-                                        Space Name
-                                    </Label>
-                                    <Input
-                                        id="spacename"
-                                        placeholder="Enter space name"
-                                        className="col-span-3"
-                                        onChange={(e) => setSpaceName(e.target.value)}
-                                    />
+        <div className="min-h-screen bg-[#fafafa]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+                {/* Quick Stats Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white">
+                        <CardContent className="p-6">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <p className="text-indigo-100 text-sm">Total Messages</p>
+                                    <h3 className="text-3xl font-bold mt-1">{activeMessages.length}</h3>
                                 </div>
+                                <MessageSquare className="h-8 w-8 text-indigo-200" />
                             </div>
-                            <div className="grid gap-4 py-2">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="spacename" className="text-right">
-                                        Heading Question
-                                    </Label>
-                                    <Input
-                                        id="headingQuestion"
-                                        placeholder="Enter heading question"
-                                        className="col-span-3"
-                                        onChange={(e) => setHeadingQues(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button onClick={createSpace}>Create Space</Button>
-                                </DialogClose>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                        </CardContent>
+                    </Card>
 
-                    {spaces.length > 0 && (
-                        <Select onValueChange={setActiveSpace}>
-                            <SelectTrigger className="w-[200px]">
-                                <SelectValue placeholder="Choose Space" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {spaces.map((space, key) => (
-                                    <SelectItem key={key} value={space}>
-                                        {space}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    )}
+                    <Card className="bg-white hover:shadow-lg transition-shadow duration-200">
+                        <CardContent className="p-6">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-gray-500 text-sm">Active Space</p>
+                                    <h3 className="text-xl font-semibold mt-1">{activeSpace || 'None Selected'}</h3>
+                                </div>
+                                <Select onValueChange={setActiveSpace}>
+                                    <SelectTrigger className="w-[140px] bg-gray-50 border-none">
+                                        <SelectValue placeholder="Switch" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {spaces.map((space, key) => (
+                                            <SelectItem key={key} value={space}>
+                                                {space}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-white hover:shadow-lg transition-shadow duration-200">
+                        <CardContent className="p-6">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-gray-500 text-sm">Message Status</p>
+                                    <h3 className="text-xl font-semibold mt-1">
+                                        {acceptMessages ? 'Accepting' : 'Paused'}
+                                    </h3>
+                                </div>
+                                <Switch
+                                    {...register('acceptMessages')}
+                                    checked={acceptMessages}
+                                    onCheckedChange={handleSwitchChange}
+                                    disabled={isSwitchLoading}
+                                    className="data-[state=checked]:bg-indigo-600"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <div className="bg-gray-100 p-4 rounded-md">
-                    <h2 className="text-lg font-semibold mb-2">Your Unique Link</h2>
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            value={profileUrl}
-                            readOnly
-                            className="flex-grow p-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <Button onClick={copyToClipboard} className="rounded-l-none">
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy
+                {/* Action Bar */}
+                <div className="bg-white rounded-lg p-4 mb-8 flex flex-wrap gap-4 items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button className="bg-indigo-600 hover:bg-indigo-700">
+                                    <PlusCircle className="h-4 w-4 mr-2" />
+                                    New Space
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Create New Space</DialogTitle>
+                                    <DialogDescription>
+                                        Create a dedicated space for collecting messages
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                    <div className="space-y-2">
+                                        <Label>Space Name</Label>
+                                        <Input
+                                            placeholder="Enter space name"
+                                            onChange={(e) => setSpaceName(e.target.value)}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Heading Question</Label>
+                                        <Input
+                                            placeholder="Enter heading question"
+                                            onChange={(e) => setHeadingQues(e.target.value)}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        <Button onClick={createSpace} className="bg-indigo-600 hover:bg-indigo-700">
+                                            Create Space
+                                        </Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <div className="flex-1 max-w-xl">
+                            <div className="relative">
+                                <Input
+                                    value={profileUrl}
+                                    readOnly
+                                    className="pr-24 bg-gray-50"
+                                />
+                                <Button
+                                    onClick={copyToClipboard}
+                                    className="absolute right-1 top-1 bottom-1 bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                >
+                                    <Copy className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Export
+                                    <ChevronDown className="h-4 w-4 ml-2" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => exportData('json')}>
+                                    Export as JSON
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => exportData('csv')}>
+                                    Export as CSV
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <Button
+                            onClick={summarizeMessages}
+                            className="bg-indigo-600 hover:bg-indigo-700"
+                            disabled={isLoading2}
+                        >
+                            {isLoading2 ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : (
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                            )}
+                            Summarize
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            onClick={() => fetchMessages(true)}
+                            disabled={isLoading}
+                        >
+                            <RefreshCcw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                         </Button>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    <Switch
-                        {...register('acceptMessages')}
-                        checked={acceptMessages}
-                        onCheckedChange={handleSwitchChange}
-                        disabled={isSwitchLoading}
-                    />
-                    <span className="font-medium">
-                        Accept Messages: {acceptMessages ? 'On' : 'Off'}
-                    </span>
-                </div>
-            </div>
-
-            <Separator className="my-8" />
-
-            <div className="flex items-center justify-between mb-8">
-                <Button
-                    variant="outline"
-                    onClick={() => fetchMessages(true)}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : (
-                        <RefreshCcw className="h-4 w-4 mr-2" />
-                    )}
-                    Refresh Messages
-                </Button>
-                <div className='flex space-x-2'>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Export Data</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>Choose format</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => exportData('json')}>JSON</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => exportData('csv')}>CSV</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button
-                        onClick={summarizeMessages}
-                        className="bg-black hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2"
-                    >
-                        {isLoading2 ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <MessageSquare className="w-5 h-5" />
-                        )}
-                        <span>Summarise Messages</span>
-                    </Button>
-                </div>
-
-            </div>
-            {summary && (
-                <div className="my-8 p-4 bg-gray-100 rounded-md relative">
-                    <h2 className="text-lg font-semibold mb-2">Summary</h2>
-                    <p>{summary}</p>
-                    <button
-                        onClick={clearSummary}
-                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
-                        aria-label="Close summary"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {activeMessages.length > 0 ? (
-                    activeMessages.map((message) => (
-                        <MessageCard
-                            key={message._id}
-                            message={message}
-                            onMessageDelete={handleDeleteMessage}
-                        />
-                    ))
-                ) : (
-                    <p className="text-gray-500 col-span-2 text-center py-8">No messages to display.</p>
+                {/* Summary Card */}
+                {summary && (
+                    <Card className="mb-8 bg-white">
+                        <CardContent className="p-6 relative">
+                            <div className="flex justify-between items-start mb-4">
+                                <h2 className="text-lg font-semibold text-gray-900">Message Summary</h2>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={clearSummary}
+                                    className="h-8 w-8 p-0"
+                                >
+                                    <X className="h-5 w-5" />
+                                </Button>
+                            </div>
+                            <p className="text-gray-600 leading-relaxed">{summary}</p>
+                        </CardContent>
+                    </Card>
                 )}
+
+                {/* Messages Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {activeMessages.length > 0 ? (
+                        activeMessages.map((message) => (
+                            <MessageCard
+                                key={message._id}
+                                message={message}
+                                onMessageDelete={handleDeleteMessage}
+                            />
+                        ))
+                    ) : (
+                        <div className="col-span-2">
+                            <Card className="bg-white">
+                                <CardContent className="p-12 text-center">
+                                    <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <MessageSquare className="h-8 w-8 text-indigo-600" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Messages Yet</h3>
+                                    <p className="text-gray-500 max-w-sm mx-auto">
+                                        Share your space link to start receiving messages from others.
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
