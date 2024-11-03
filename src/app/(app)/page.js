@@ -25,18 +25,18 @@ export default function Home() {
   const router = useRouter()
   return (
     <div className="min-h-screen flex flex-col bg-black">
-      <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 text-white">
+      <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 lg:px-24 py-8 sm:py-12 text-white">
         {/* Hero Section */}
         <motion.section
           initial="initial"
           animate="animate"
           variants={fadeIn}
-          className="text-center mb-16 max-w-4xl"
+          className="text-center mb-8 sm:mb-16 max-w-4xl mx-auto px-4"
         >
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent">
             Feedify Feedback - Instant Insights from Your Customers
           </h1>
-          <p className="mt-7 text-xl text-gray-400 mb-8">
+          <p className="mt-4 sm:mt-7 text-lg sm:text-xl text-gray-400 mb-6 sm:mb-8">
             Seamlessly gather and analyze feedback with AI to gain deeper insights into your products. Create dedicated spaces for each product and share unique public links with your customers.
           </p>
           <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300" onClick={() => router.push('/sign-up')}>
@@ -45,7 +45,7 @@ export default function Home() {
         </motion.section>
 
         {/* Features Section */}
-        <section id="features" className="w-full max-w-5xl mb-16">
+        <section id="features" className="w-full max-w-5xl mb-8 sm:mb-16 px-4">
           <motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -53,7 +53,7 @@ export default function Home() {
           >
             Key Features
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {[
               { icon: Star, title: "AI-Powered Analysis", description: "Gain deeper insights with our advanced AI algorithms." },
               { icon: BarChart2, title: "Real-time Analytics", description: "Track feedback trends and sentiment in real-time." },
@@ -80,7 +80,7 @@ export default function Home() {
         </section>
 
         {/* Testimonials Carousel */}
-        <section id="testimonials" className="w-full max-w-3xl mb-16">
+        <section id="testimonials" className="w-full max-w-3xl mb-8 sm:mb-16 px-4">
           <motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -97,9 +97,9 @@ export default function Home() {
                 <CarouselItem key={index} className="p-1">
                   <Card className="bg-gray-900 border-gray-800 transition-all duration-300">
                     <CardHeader>
-                      <CardTitle className="text-xl text-gray-300">{message.title}</CardTitle>
+                      <CardTitle className="text-lg sm:text-xl text-gray-300">{message.title}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-start space-x-4">
+                    <CardContent className="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-4">
                       <Mail className="flex-shrink-0 text-gray-500 mt-1" />
                       <div>
                         <p className="text-gray-300 italic">&quot;{message.content}&quot;</p>
@@ -121,10 +121,10 @@ export default function Home() {
         <motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-16 px-4"
         >
-          <h2 className="text-3xl font-bold mb-4 text-gray-100">Ready to Transform Your Feedback Process?</h2>
-          <p className="text-xl text-gray-400 mb-8">Join thousands of satisfied customers and start gathering insights today.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-gray-100">Ready to Transform Your Feedback Process?</h2>
+          <p className="text-lg sm:text-xl text-gray-400 mb-6 sm:mb-8">Join thousands of satisfied customers and start gathering insights today.</p>
           <Button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center" onClick={() => router.push('/sign-up')}>
             Start Your Free Trial <ArrowRight className="ml-2" />
           </Button>
@@ -132,7 +132,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center p-6 bg-gray-900 text-gray-400">
+      <footer className="text-center p-4 sm:p-6 bg-gray-900 text-gray-400">
         <div className="border-t border-gray-800 pt-4">
           &copy; 2024 Feedify Feedback. All rights reserved.
         </div>
