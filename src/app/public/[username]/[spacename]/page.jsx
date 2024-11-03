@@ -25,6 +25,7 @@ import { useParams } from 'next/navigation';
 export default function SendMessage() {
     const params = useParams();
     const { username, spacename } = params;
+    const lowerCaseSpacename = spacename.toLowerCase();
     const [isLoading, setIsLoading] = useState(false);
     const [title, setTitle] = useState('');
     const [suggestedMessages, setSuggestedMessages] = useState([]);
@@ -41,7 +42,7 @@ export default function SendMessage() {
             const response = await axios.post('/api/send-message', {
                 ...data,
                 username,
-                spacename
+                spacename:lowerCaseSpacename
             });
 
             toast({
@@ -64,7 +65,7 @@ export default function SendMessage() {
     const getHeading = async () => {
         try {
             const response = await axios.get('/api/get-heading', {
-                params: { username, spacename }
+                params: { username, spacename:lowerCaseSpacename }
             });
             setTitle(response.data.data[0].title);
         } catch (error) {
