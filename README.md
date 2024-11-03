@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Feedify Feedback 🎯
 
-## Getting Started
+A modern, AI-powered customer feedback management platform that helps businesses collect, analyze, and derive meaningful insights from customer feedback in real-time.
 
-First, run the development server:
+### 🎥 Live Demo
+
+Check out live demo at: [https://feedify-feedback.vercel.app](https://feedify-feedback.vercel.app)
+
+## 🌟 Features
+
+- **AI-Powered Analysis**: Advanced algorithms that process and analyze feedback to extract meaningful insights
+- **Real-time Analytics**: Instant tracking of feedback trends and sentiment analysis
+- **Dedicated Product Spaces**: Separate feedback management spaces for different products
+- **Public Feedback Links**: Shareable links for easy customer feedback collection
+- **Modern UI**: Built with Next.js 14 and Tailwind CSS
+- **Responsive Design**: Mobile-first approach with full responsiveness
+- **Interactive Elements**: Smooth animations powered by Framer Motion
+- **Testimonials**: Dynamic carousel showcasing customer feedback
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18.x or higher
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository
+
+
+```bash
+git clone https://github.com/imdinnesh/Feedify.git
+```
+
+2. Install dependencies
+
+
+```bash
+npm install
+```
+
+3. Set up environment variables
+
+
+```bash
+cp .env.sample .env.local
+```
+
+4. Run the development server
+
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Frontend**: Next.js 14
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Components**: Shadcn UI
+- **Icons**: Lucide Icons
+- **Carousel**: Embla Carousel
 
-## Learn More
+## 🔒 Security Features
 
-To learn more about Next.js, take a look at the following resources:
+- Protected API routes
+- Environment variable security
+- Client-side routing protection
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Deploy on Vercel
+## 📝 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 📧 Contact
+
+For support or queries: itsdinnesh@gmail.com
+
+LinkedIn: [https://www.linkedin.com/in/imdinnesh](https://www.linkedin.com/in/imdinnesh)
+
+---
+Made with ❤️ by Dinesh
