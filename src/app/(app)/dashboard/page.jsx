@@ -17,6 +17,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AcceptMessageSchema } from '@/schemes/acceptSchema';
 import { Card, CardContent } from '@/components/ui/card';
+import { CreateSpaceSchema } from '@/schemes/createSpaceSchema';
 
 import {
     DropdownMenu,
@@ -49,6 +50,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import * as z from "zod";
+
 function UserDashboard() {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +64,9 @@ function UserDashboard() {
     const [activeSpace, setActiveSpace] = useState('')
     const [headingQues, setHeadingQues] = useState('');
     const [summary, setSummary] = useState('');
+
+    const [spaceError, setSpaceError] = useState('');
+    const [titleError, setTitleError] = useState('');
 
     const { toast } = useToast();
 
@@ -122,11 +128,22 @@ function UserDashboard() {
 
     const createSpace = async () => {
         try {
-            const response = await axios.post('/api/create-spaces', {
-                username: session.user.username,
+            // Clear previous errors
+            setSpaceError('');
+            setTitleError('');
+
+            // Validate the input
+            const validatedData = CreateSpaceSchema.parse({
                 space: spacename,
                 title: headingQues
             });
+
+            const response = await axios.post('/api/create-spaces', {
+                username: session.user.username,
+                space: validatedData.space,
+                title: validatedData.title
+            });
+            
             setSpaces([...spaces, spacename]);
             if (response.data.success) {
                 toast({
@@ -134,8 +151,27 @@ function UserDashboard() {
                     description: 'A new space has been created.',
                     variant: 'success',
                 });
+                // Clear input fields
+                setSpaceName('');
+                setHeadingQues('');
+                // Close the dialog on success
+                document.querySelector('[data-dialog-close]')?.click();
             }
         } catch (error) {
+            // Handle Zod validation errors
+            if (error instanceof z.ZodError) {
+                error.errors.forEach((err) => {
+                    if (err.path[0] === 'space') {
+                        setSpaceError(err.message);
+                    }
+                    if (err.path[0] === 'title') {
+                        setTitleError(err.message);
+                    }
+                });
+                return;
+            }
+            
+            // Handle other errors
             toast({
                 title: 'Error',
                 description: error.response?.data.message ?? 'Failed to create a new space',
@@ -394,17 +430,25 @@ function UserDashboard() {
                                         <Label>Space Name</Label>
                                         <Input
                                             placeholder="Enter space name"
+                                            value={spacename}
                                             onChange={(e) => setSpaceName(e.target.value)}
-                                            className="w-full"
+                                            className={`w-full ${spaceError ? 'border-red-500' : ''}`}
                                         />
+                                        {spaceError && (
+                                            <p className="text-sm text-red-500 mt-1">{spaceError}</p>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Heading Question</Label>
                                         <Input
                                             placeholder="Enter heading question"
+                                            value={headingQues}
                                             onChange={(e) => setHeadingQues(e.target.value)}
-                                            className="w-full"
+                                            className={`w-full ${titleError ? 'border-red-500' : ''}`}
                                         />
+                                        {titleError && (
+                                            <p className="text-sm text-red-500 mt-1">{titleError}</p>
+                                        )}
                                     </div>
                                 </div>
                                 <DialogFooter>
