@@ -33,7 +33,7 @@ export default function Home() {
           variants={fadeIn}
           className="text-center mb-8 sm:mb-16 max-w-4xl mx-auto px-4"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">
             Feedify Feedback - Instant Insights from Your Customers
           </h1>
           <p className="mt-4 sm:mt-7 text-lg sm:text-xl text-gray-400 mb-6 sm:mb-8">
