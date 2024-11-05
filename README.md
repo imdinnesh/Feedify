@@ -59,6 +59,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser
 
 - **Frontend**: Next.js 14
 - **Styling**: Tailwind CSS
+- **UI Library**: Shadcn UI
 - **Animations**: Framer Motion
 - **Components**: Shadcn UI
 - **Icons**: Lucide Icons
