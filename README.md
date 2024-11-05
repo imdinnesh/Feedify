@@ -64,6 +64,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser
 - **Components**: Shadcn UI
 - **Icons**: Lucide Icons
 - **Carousel**: Embla Carousel
+- **Database**: MongoDB
 
 ## 🔒 Security Features
 
