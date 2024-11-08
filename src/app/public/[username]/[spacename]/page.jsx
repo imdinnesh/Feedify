@@ -155,16 +155,16 @@ export default function SendMessage() {
                         </Button>
 
                         {suggestedMessages.length > 0 && (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 animate-fadeIn">
+                            <div className="flex flex-col gap-2 animate-fadeIn">
                                 {suggestedMessages.map((message, index) => (
                                     <Button
                                         key={index}
                                         variant="ghost"
-                                        className="text-left h-auto py-2 px-3 hover:bg-primary/5"
+                                        className="text-left h-auto py-3 px-4 hover:bg-primary/5 w-full justify-start"
                                         onClick={() => form.setValue('content', message)}
                                     >
                                         <ArrowRight className="mr-2 h-4 w-4 flex-shrink-0" />
-                                        <span className="line-clamp-2">{message}</span>
+                                        <span>{message}</span>
                                     </Button>
                                 ))}
                             </div>
