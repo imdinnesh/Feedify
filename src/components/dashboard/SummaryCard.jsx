@@ -1,27 +1,39 @@
-import { Sparkles, X } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-
-export function SummaryCard({ summary, clearSummary }) {
+export function SummaryCard({ summaryChunks, clearSummary }) {
     return (
-        <Card className="mb-8 bg-white hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <CardContent className="p-6 relative">
-                <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                        <Sparkles className="h-5 w-5 mr-2 text-gray-500" />
-                        Message Summary
-                    </h2>
-                    <Button
-                        variant="ghost"
-                        size="icon"
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        Summary
+                    </h3>
+                    <button 
                         onClick={clearSummary}
-                        className="h-8 w-8 p-0 hover:text-gray-700"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors 
+                        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring 
+                        disabled:pointer-events-none disabled:opacity-50
+                        border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700
+                        h-8 px-3 text-gray-600 dark:text-gray-300"
                     >
-                        <X className="h-5 w-5" />
-                    </Button>
+                        Clear
+                    </button>
                 </div>
-                <p className="text-gray-600 leading-relaxed">{summary}</p>
-            </CardContent>
-        </Card>
+            </div>
+            <div className="p-4">
+                <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {summaryChunks.map((chunk, index) => (
+                        <span 
+                            key={index} 
+                            className="transition-opacity duration-200 ease-in-out"
+                            style={{ 
+                                opacity: 1,
+                                animation: 'fadeIn 0.5s ease-in-out'
+                            }}
+                        >
+                            {chunk}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
-} 
+}

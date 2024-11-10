@@ -29,11 +29,31 @@ export async function POST(request) {
     }
 
     try {
-        
         const prompt = `Summarize the following feedbacks in a concise manner: ${messages.join(' ')}`;
-        const result = await model.generateContent(prompt);
-        const summary = result.response.text();
-        return Response.json({ success: true, summary });
+        const result = await model.generateContentStream(prompt);
+
+        // Create a new ReadableStream for streaming the response
+        const stream = new ReadableStream({
+            async start(controller) {
+                try {
+                    for await (const chunk of result.stream) {
+                        const text = chunk.text();
+                        controller.enqueue(text);
+                    }
+                    controller.close();
+                } catch (error) {
+                    controller.error(error);
+                }
+            }
+        });
+
+        // Return streaming response
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/plain',
+                'Transfer-Encoding': 'chunked',
+            },
+        });
     } catch (error) {
         console.error('Error summarizing messages:', error);
         return Response.json(
