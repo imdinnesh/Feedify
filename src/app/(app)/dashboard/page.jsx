@@ -24,6 +24,7 @@ function UserDashboard() {
         activeSpace,
         headingQues,
         summary,
+        summaryChunks,
         spaceError,
         titleError,
         acceptMessages,
@@ -62,33 +63,39 @@ function UserDashboard() {
                     isSwitchLoading={isSwitchLoading}
                 />
                 
-                <ActionBar 
-                    profileUrl={profileUrl}
-                    copyToClipboard={copyToClipboard}
-                    activeSpace={activeSpace}
-                    spacename={spacename}
-                    setSpaceName={setSpaceName}
-                    headingQues={headingQues}
-                    setHeadingQues={setHeadingQues}
-                    spaceError={spaceError}
-                    titleError={titleError}
-                    createSpace={createSpace}
-                    exportData={exportData}
-                    summarizeMessages={summarizeMessages}
-                    isLoading2={isLoading2}
-                    fetchMessages={fetchMessages}
-                    isLoading={isLoading}
-                />
-
-                {summary && (
-                    <SummaryCard 
-                        summary={summary}
-                        clearSummary={clearSummary}
+                <div className="mt-8">
+                    <ActionBar 
+                        profileUrl={profileUrl}
+                        copyToClipboard={copyToClipboard}
+                        activeSpace={activeSpace}
+                        spacename={spacename}
+                        setSpaceName={setSpaceName}
+                        headingQues={headingQues}
+                        setHeadingQues={setHeadingQues}
+                        spaceError={spaceError}
+                        titleError={titleError}
+                        createSpace={createSpace}
+                        exportData={exportData}
+                        summarizeMessages={summarizeMessages}
+                        isLoading2={isLoading2}
+                        fetchMessages={fetchMessages}
+                        isLoading={isLoading}
                     />
+                </div>
+
+                {/* Summary Card with proper spacing */}
+                {(summary || summaryChunks?.length > 0) && (
+                    <div className="mt-8 mb-8">
+                        <SummaryCard 
+                            summary={summary}
+                            summaryChunks={summaryChunks}
+                            clearSummary={clearSummary}
+                        />
+                    </div>
                 )}
 
                 {/* Messages Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {activeMessages.length > 0 ? (
                         activeMessages.map((message) => (
                             <MessageCard

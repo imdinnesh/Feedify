@@ -17,6 +17,7 @@ export function useDashboard({ session, toast }) {
     const [summary, setSummary] = useState('');
     const [spaceError, setSpaceError] = useState('');
     const [titleError, setTitleError] = useState('');
+    const [summaryChunks, setSummaryChunks] = useState([]);
 
     const form = useForm({
         resolver: zodResolver(AcceptMessageSchema),
@@ -220,21 +221,64 @@ export function useDashboard({ session, toast }) {
 
     const summarizeMessages = async () => {
         setIsLoading2(true);
+        setSummaryChunks([]);
         try {
             const activeMessages = messages.filter((message) => message.space_name === activeSpace);
-            const response = await axios.post('/api/summarize-messages', {
-                messages: activeMessages.map(message => message.content),
+            
+            if (activeMessages.length === 0) {
+                toast({
+                    title: 'No Messages',
+                    description: 'There are no messages to summarize.',
+                    variant: 'warning',
+                });
+                return;
+            }
+
+            const response = await fetch('/api/summarize-messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messages: activeMessages.map(message => message.content),
+                }),
             });
-            setSummary(response.data.summary);
+
+            if (!response.ok) {
+                throw new Error('Failed to start summarization');
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            // Helper function to add random delay for more natural feeling
+            const delay = () => new Promise(resolve => {
+                // Random delay between 150ms and 300ms
+                const randomDelay = Math.floor(Math.random() * (300 - 150 + 1)) + 150;
+                setTimeout(resolve, randomDelay);
+            });
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value);
+                setSummaryChunks(prev => [...prev, chunk]);
+                
+                // Add a variable delay between chunks
+                await delay();
+            }
+
             toast({
                 title: 'Summary Generated',
                 description: 'Your messages have been summarized.',
                 variant: 'success',
             });
         } catch (error) {
+            console.error('Summarization error:', error);
             toast({
                 title: 'Error',
-                description: error.response?.data.message ?? 'Failed to summarize messages',
+                description: error.message || 'Failed to summarize messages',
                 variant: 'destructive',
             });
         } finally {
@@ -244,6 +288,7 @@ export function useDashboard({ session, toast }) {
 
     const clearSummary = () => {
         setSummary('');
+        setSummaryChunks([]);
     };
 
     useEffect(() => {
@@ -278,6 +323,7 @@ export function useDashboard({ session, toast }) {
         summarizeMessages,
         clearSummary,
         fetchMessages,
-        profileUrl
+        profileUrl,
+        summaryChunks
     };
 } 
