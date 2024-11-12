@@ -88,7 +88,7 @@ export function useDashboard({ session, toast }) {
                 space: validatedData.space,
                 title: validatedData.title
             });
-            
+
             setSpaces([...spaces, spacename]);
             if (response.data.success) {
                 toast({
@@ -112,7 +112,7 @@ export function useDashboard({ session, toast }) {
                 });
                 return;
             }
-            
+
             toast({
                 title: 'Error',
                 description: error.response?.data.message ?? 'Failed to create a new space',
@@ -158,10 +158,10 @@ export function useDashboard({ session, toast }) {
         }
     };
 
-    const baseUrl = typeof window !== 'undefined' 
+    const baseUrl = typeof window !== 'undefined'
         ? `${window.location.protocol}//${window.location.host}`
         : '';
-    const profileUrl = session?.user?.username 
+    const profileUrl = session?.user?.username
         ? `${baseUrl}/public/${session.user.username}/${activeSpace}`
         : '';
 
@@ -224,7 +224,7 @@ export function useDashboard({ session, toast }) {
         setSummaryChunks([]);
         try {
             const activeMessages = messages.filter((message) => message.space_name === activeSpace);
-            
+
             if (activeMessages.length === 0) {
                 toast({
                     title: 'No Messages',
@@ -250,21 +250,21 @@ export function useDashboard({ session, toast }) {
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
-            
+
             // Helper function to add random delay for more natural feeling
             const delay = () => new Promise(resolve => {
                 // Random delay between 150ms and 300ms
                 const randomDelay = Math.floor(Math.random() * (300 - 150 + 1)) + 150;
                 setTimeout(resolve, randomDelay);
             });
-            
+
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                
+
                 const chunk = decoder.decode(value);
                 setSummaryChunks(prev => [...prev, chunk]);
-                
+
                 // Add a variable delay between chunks
                 await delay();
             }
@@ -291,6 +291,47 @@ export function useDashboard({ session, toast }) {
         setSummaryChunks([]);
     };
 
+    const getEmbedCode = useCallback(() => {
+        if (!activeSpace || !session?.user?.username) {
+            toast({
+                title: "Error",
+                description: "Space or username not available",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const embedCode = `<iframe
+        src="${window.location.origin}/public-feedback.html?space_name=${encodeURIComponent(activeSpace)}&username=${encodeURIComponent(session.user.username)}"
+        width="100%"
+        height="500"
+        style="border: none; width: 100%; max-width: 900px; margin: 0 auto; display: block; background: transparent;"
+        ></iframe>`;
+
+        try {
+            navigator.clipboard.writeText(embedCode).then(() => {
+                toast({
+                    title: "Embed code copied!",
+                    description: "The embed code has been copied to your clipboard.",
+                    variant: "success"
+                });
+            }).catch((err) => {
+                console.error('Failed to copy:', err);
+                toast({
+                    title: "Copy failed",
+                    description: "Please try copying manually",
+                    variant: "destructive"
+                });
+            });
+        } catch (error) {
+            console.error('Copy operation failed:', error);
+            toast({
+                title: "Copy failed",
+                description: "Please try copying manually",
+                variant: "destructive"
+            });
+        }
+    }, [activeSpace, session?.user?.username, toast]);
 
     useEffect(() => {
         if (!session || !session.user) return;
@@ -325,6 +366,7 @@ export function useDashboard({ session, toast }) {
         clearSummary,
         fetchMessages,
         profileUrl,
-        summaryChunks
+        summaryChunks,
+        getEmbedCode,
     };
 } 

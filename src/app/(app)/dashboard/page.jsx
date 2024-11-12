@@ -40,7 +40,8 @@ function UserDashboard() {
         summarizeMessages,
         clearSummary,
         fetchMessages,
-        profileUrl
+        profileUrl,
+        getEmbedCode
     } = useDashboard({ session, toast });
 
     if (!session || !session.user) {
@@ -80,6 +81,8 @@ function UserDashboard() {
                         isLoading2={isLoading2}
                         fetchMessages={fetchMessages}
                         isLoading={isLoading}
+                        getEmbedCode={getEmbedCode}
+
                     />
                 </div>
 
