@@ -1,0 +1,169 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 16px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+#feedbackContainer {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Theme Definitions */
+.theme-light {
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --hover-border: #2196f3;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --gradient: linear-gradient(145deg, #ffffff, #f5f5f5);
+    --hover-gradient: linear-gradient(145deg, #f8f9ff, #f0f4ff);
+}
+
+.theme-dark {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #ffffff;
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --hover-border: #3d5afe;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --gradient: linear-gradient(145deg, #1e1e1e, #2d2d2d);
+    --hover-gradient: linear-gradient(145deg, #2d2d2d, #1e1e1e);
+}
+
+/* Applied theme styles */
+body.themed {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+.themed .feedback-card {
+    background: var(--gradient);
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    width: calc(33.333% - 10px);
+    min-width: 180px;
+    max-width: 280px;
+}
+
+.themed .feedback-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--hover-border);
+    border-radius: 3px 0 0 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.themed .feedback-card:hover {
+    transform: translateY(-2px);
+    background: var(--hover-gradient);
+    border-color: var(--hover-border);
+    box-shadow: 0 4px 8px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.themed .feedback-card:hover::before {
+    opacity: 1;
+}
+
+/* Error state */
+.themed .feedback-card.error {
+    background: var(--card-bg);
+    color: #ff5252;
+    text-align: center;
+    border-color: #ff5252;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(6px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+.themed .feedback-card {
+    animation: slideIn 0.2s ease-out forwards;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 900px) {
+    .themed .feedback-card {
+        width: calc(50% - 10px);
+        max-width: 260px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    #feedbackContainer {
+        gap: 12px;
+    }
+
+    .themed .feedback-card {
+        width: 100%;
+        max-width: 100%;
+        min-width: unset;
+        height: 60px;
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    #feedbackContainer {
+        gap: 10px;
+    }
+
+    .themed .feedback-card {
+        height: 55px;
+        padding: 12px;
+    }
+}

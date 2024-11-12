@@ -102,6 +102,8 @@ function UserDashboard() {
                                 key={message._id}
                                 message={message}
                                 onMessageDelete={handleDeleteMessage}
+                                activeSpace={activeSpace}
+
                             />
                         ))
                     ) : (

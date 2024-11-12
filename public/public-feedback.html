@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Feedback</title>
+    <link rel="stylesheet" href="/styles/feedback-styles.css">
+</head>
+<body>
+    <div id="feedbackContainer"></div>
+
+    <script>
+        const themes = ['light', 'dark'];
+        
+        function applyTheme(themeName) {
+            const validTheme = themes.includes(themeName) ? themeName : 'light';
+            document.body.className = `themed theme-${validTheme}`;
+        }
+
+        function createFeedbackCard(feedback, index) {
+            const card = document.createElement('div');
+            card.className = 'feedback-card';
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.title = feedback;
+            card.textContent = feedback;
+            return card;
+        }
+
+        function displayError(message) {
+            const container = document.getElementById('feedbackContainer');
+            const errorCard = document.createElement('div');
+            errorCard.className = 'feedback-card error';
+            errorCard.textContent = message;
+            container.appendChild(errorCard);
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const themeName = params.get('theme') || 'light';
+        applyTheme(themeName);
+
+        const spaceName = params.get('space_name');
+        const username = params.get('username');
+        
+        if (spaceName && username) {
+            fetch(`/api/get-public-feedback?space_name=${encodeURIComponent(spaceName)}&username=${encodeURIComponent(username)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.feedbacks && Array.isArray(data.feedbacks.public_feedbacks)) {
+                        const container = document.getElementById('feedbackContainer');
+                        
+                        if (data.feedbacks.public_feedbacks.length === 0) {
+                            displayError('No feedback available.');
+                            return;
+                        }
+
+                        data.feedbacks.public_feedbacks.forEach((feedback, index) => {
+                            const feedbackCard = createFeedbackCard(feedback, index);
+                            container.appendChild(feedbackCard);
+                        });
+                    } else {
+                        displayError('No feedback available for this user.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching feedbacks:', error);
+                    displayError('Failed to load feedback. Please try again later.');
+                });
+        } else {
+            displayError('Space name and username are required.');
+        }
+    </script>
+</body>
+</html>

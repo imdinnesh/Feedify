@@ -291,6 +291,7 @@ export function useDashboard({ session, toast }) {
         setSummaryChunks([]);
     };
 
+
     useEffect(() => {
         if (!session || !session.user) return;
         fetchMessages();
