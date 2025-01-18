@@ -14,7 +14,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { verifySchema } from '@/schemes/verifySchema';
 
 export default function VerifyAccount() {
@@ -27,26 +26,26 @@ export default function VerifyAccount() {
 
 
     //Getting code from the server
-    const [code, setCode] = useState('');
-    useEffect(() => {
-        const fetchCode = async () => {
-            try {
-                const lastPathSegment = window.location.pathname.split('/').filter(Boolean).pop();
-                const response = await axios.get(`/api/verify-code/${lastPathSegment}`);
-                setCode(response.data.code);
-            } catch (error) {
-                const axiosError = error;
-                toast({
-                    title: 'Error',
-                    description:
-                        axiosError.response?.data.message ??
-                        'An error occurred. Please try again.',
-                    variant: 'destructive',
-                });
-            }
-        };
-        fetchCode();
-    }, [])
+    // const [code, setCode] = useState('');
+    // useEffect(() => {
+    //     const fetchCode = async () => {
+    //         try {
+    //             const lastPathSegment = window.location.pathname.split('/').filter(Boolean).pop();
+    //             const response = await axios.get(`/api/verify-code/${lastPathSegment}`);
+    //             setCode(response.data.code);
+    //         } catch (error) {
+    //             const axiosError = error;
+    //             toast({
+    //                 title: 'Error',
+    //                 description:
+    //                     axiosError.response?.data.message ??
+    //                     'An error occurred. Please try again.',
+    //                 variant: 'destructive',
+    //             });
+    //         }
+    //     };
+    //     fetchCode();
+    // }, [])
 
 
     const onSubmit = async (data) => {
@@ -83,7 +82,8 @@ export default function VerifyAccount() {
                     </h1>
                     <p className="mb-4">Enter the verification code sent to your email</p>
                 </div>
-                <div className="flex flex-col items-center justify-center bg-gray-100">
+                {/* Veification Code */}
+                {/* <div className="flex flex-col items-center justify-center bg-gray-100">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-md text-center">
                         <h2 className="text-xl font-semibold mb-4">Verification Code</h2>
                         <p className="mb-4 text-lg text-blue-600 font-mono">{code}</p>
@@ -91,7 +91,7 @@ export default function VerifyAccount() {
                             In actual production, codes will be sent through email or SMS.
                         </p>
                     </div>
-                </div>
+                </div> */}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField

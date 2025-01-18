@@ -8,7 +8,7 @@ export async function sendVerificationEmail(
 ) {
     try {
         await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: `onboarding@${process.env.EMAIL_DOMAIN}`,
             to:email,
             subject: 'Feedify Feedback Message Verification Code',
             react: VerificationEmail({ username, otp: verifyCode }),
