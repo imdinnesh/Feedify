@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/carousel';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation'
+import { currentYear } from '@/helpers/currentYear';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -134,7 +135,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="text-center p-4 sm:p-6 bg-gray-900 text-gray-400">
         <div className="border-t border-gray-800 pt-4">
-          &copy; 2024 Feedify Feedback. All rights reserved.
+          &copy; {currentYear} Feedify Feedback. All rights reserved.
         </div>
       </footer>
     </div>
