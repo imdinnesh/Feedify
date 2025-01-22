@@ -46,12 +46,19 @@ export default function VerificationEmail({ username, otp }) {
                     </Text>
                 </Row>
                 <Row>
-                    <Button
-                        href={`http://localhost:3000/verify/${username}`}
-                        style={{ color: '#61dafb',padding: '10px',border: '1px solid #61dafb',borderRadius: '5px'}}
+                    ;<Button
+                        href={`${process.env.CLIENT_URL}/verify/${username}`}
+                        style={{
+                            color: "#4A4A4A",
+                            padding: "10px",
+                            border: "1px solid #4A4A4A",
+                            borderRadius: "5px",
+                        }}
                     >
                         Verify here
                     </Button>
+
+
                 </Row>
             </Section>
         </Html>
