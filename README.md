@@ -61,7 +61,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser
 - **Styling**: Tailwind CSS
 - **UI Library**: Shadcn UI
 - **Animations**: Framer Motion
-- **Components**: Shadcn UI
 - **Icons**: Lucide Icons
 - **Carousel**: Embla Carousel
 - **Database**: MongoDB

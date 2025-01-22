@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { signIn } from 'next-auth/react';
 import {
     Form,
@@ -22,7 +21,7 @@ import { useState } from 'react';
 
 export default function SignInForm() {
 
-    const [isLoading,setIsLoading]=useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const router = useRouter();
@@ -67,6 +66,37 @@ export default function SignInForm() {
         }
     };
 
+    const handleGuest = async () => {
+        setIsLoading(true);
+        const result = await signIn('credentials', {
+            redirect: false,
+            identifier: 'guest',
+            password: '123456',
+        });
+
+        if (result?.error) {
+            setIsLoading(false);
+            if (result.error === 'CredentialsSignin') {
+                toast({
+                    title: 'Login Failed',
+                    description: 'Incorrect username or password',
+                    variant: 'destructive',
+                });
+            } else {
+                toast({
+                    title: 'Error',
+                    description: result.error,
+                    variant: 'destructive',
+                });
+            }
+        }
+        if (result?.url) {
+            setIsLoading(true);
+            router.replace('/dashboard');
+        }
+
+    };
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-800">
             <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
@@ -102,8 +132,8 @@ export default function SignInForm() {
                         />
                         <Button className='w-full' type="submit">Sign In
                             {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                    ) : (<></>)}
+                                <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                            ) : (<></>)}
                         </Button>
                     </form>
                 </Form>
@@ -114,6 +144,12 @@ export default function SignInForm() {
                             Sign up
                         </Link>
                     </p>
+                    <Button
+                        className="mt-5 w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                        onClick={handleGuest}
+                    >
+                        Login as Guest
+                    </Button>
                 </div>
             </div>
         </div>
