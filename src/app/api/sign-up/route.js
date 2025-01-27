@@ -64,13 +64,7 @@ export async function POST(request) {
 
         if (process.env.NODE_ENV === 'development') {
             // early return for development
-            return Response.json(
-                {
-                    success: true,
-                    message: 'User registered successfully. Please verify your account.',
-                },
-                { status: 201 }
-            );
+            
 
         }
         if (process.env.NODE_ENV === 'production') {
@@ -89,8 +83,24 @@ export async function POST(request) {
                     { status: 500 }
                 );
             }
+            else{
+                return Response.json(
+                    {
+                        success: true,
+                        message: 'User registered successfully. Please verify your account.',
+                    },
+                    { status: 201 }
+                );
+            }
 
         }
+        return Response.json(
+            {
+                success: true,
+                message: 'User registered successfully. Please verify your account.',
+            },
+            { status: 201 }
+        );
 
 
 
