@@ -73,7 +73,7 @@ export async function POST(request) {
             );
 
         }
-        else {
+        if (process.env.NODE_ENV === 'production') {
             // Send verification email
             const emailResponse = await sendVerificationEmail(
                 email,
