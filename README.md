@@ -55,6 +55,18 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser
 
+## Docker Setup
+
+Instant Setup
+```bash
+#Give the permission
+chmod +x setup.sh
+```
+```bash
+# Run the setup script
+./setup.sh
+```
+
 ## 🛠 Tech Stack
 
 - **Frontend**: Next.js 14
